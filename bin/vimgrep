@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Minimal ripgrep stand-in used by Telescope when `rg` is not installed.
+# Telescope invokes: [flags...] -- <pattern> [search paths...]
+set -uo pipefail
+
+separator=0
+while (($#)); do
+  if [[ "$1" == "--" ]]; then
+    separator=1
+    shift
+    break
+  fi
+  shift
+done
+
+if [[ $separator -eq 0 || $# -eq 0 ]]; then
+  exit 0
+fi
+
+pattern=$1
+shift
+paths=("$@")
+if [[ ${#paths[@]} -eq 0 ]]; then
+  paths=(.)
+fi
+
+grep --color=never --recursive --line-number --with-filename \
+  --binary-files=without-match \
+  --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=target \
+  --exclude-dir=.lazy --exclude-dir=.local --exclude-dir=vendor \
+  --extended-regexp -- "$pattern" "${paths[@]}" 2>/dev/null \
+  | sed -E 's/^([^:]+):([0-9]+):/\1:\2:1:/' || true

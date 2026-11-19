@@ -1,0 +1,10 @@
+std = "lua51"
+
+[lints]
+undefined_variable = "allow"
+incorrect_standard_library_use = "allow"
+global_usage = "allow"
+unscoped_variables = "allow"
+
+[config]
+unused_variable = { ignore_pattern = "^_" }
