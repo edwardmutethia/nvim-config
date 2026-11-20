@@ -10,7 +10,7 @@ C++, Java, and SQL.
 | File | What it controls |
 | --- | --- |
 | `~/.config/nvim/` | Neovim config (this directory) |
-| `~/.tmux.conf` | tmux prefix, splits, windows, copy mode, status line |
+| `tmux.conf` (symlinked to `~/.tmux.conf`) | tmux prefix, splits, windows, copy mode, status line |
 | `~/.config/starship.toml` | Prompt (Starship) |
 | `~/.zshrc` | Shell behavior, history, completion, `JAVA_HOME`/`PATH` |
 
