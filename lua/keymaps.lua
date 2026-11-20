@@ -18,8 +18,8 @@ map("n", "<C-Right>", ":vertical resize +2<CR>", opts("Increase window width"))
 map("n", "<Tab>", ":bnext<CR>", opts("Next buffer"))
 map("n", "<S-Tab>", ":bprevious<CR>", opts("Previous buffer"))
 map("n", "<leader>ws", ":write<CR>", opts("Save buffer"))
-map("n", "<leader>wq", ":bdelete<CR>", opts("Close buffer"))
-map("n", "<leader>wQ", ":bdelete!<CR>", opts("Force close buffer"))
+-- <leader>wq / <leader>wQ live in lua/plugins/buffers.lua so they can lazy-load
+-- mini.bufremove and preserve the window layout.
 
 -- Editing helpers
 map("v", "J", ":move '>+1<CR>gv=gv", opts("Move selection down"))

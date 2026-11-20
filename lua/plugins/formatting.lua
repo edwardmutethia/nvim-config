@@ -7,7 +7,9 @@ return {
       lua = { "stylua" },
       rust = { "rustfmt", lsp_format = "fallback" },
       python = { "ruff_fix", "ruff_format" },
-      go = { "gofumpt" },
+      -- gofumpt emits tabs by design; spaces4 converts only leading indentation
+      -- back to four spaces without touching tabs inside string literals.
+      go = { "gofumpt", "spaces4" },
       javascript = { "prettier" },
       javascriptreact = { "prettier" },
       typescript = { "prettier" },
@@ -28,8 +30,30 @@ return {
       [ "_" ] = { "trim_whitespace" },
     },
     formatters = {
-      -- Keep the user's 4-space indentation for Prettier-managed web files.
-      prettier = { prepend_args = { "--tab-width", "4" } },
+      -- Convert only leading tabs to four spaces. Used after formatters such
+      -- as gofumpt that force tabs, while preserving tabs inside strings.
+      spaces4 = {
+        format = function(_, _, lines, callback)
+          local out = {}
+          for _, line in ipairs(lines) do
+            local indent, rest = line:match("^([\t ]*)(.*)$")
+            table.insert(out, indent:gsub("\t", "    ") .. rest)
+          end
+          callback(nil, out)
+        end,
+      },
+      -- Keep 4 spaces even when a formatter has a different default or the
+      -- project has no local config telling it what indentation to use.
+      prettier = { prepend_args = { "--tab-width", "4", "--no-use-tabs" } },
+      stylua = { prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" } },
+      rustfmt = { prepend_args = { "--config", "tab_spaces=4,hard_tabs=false" } },
+      ruff_format = { prepend_args = { "--config", "indent-width = 4" } },
+      ["clang-format"] = {
+        prepend_args = {
+          "-style={BasedOnStyle: LLVM, IndentWidth: 4, TabWidth: 4, UseTab: Never}",
+        },
+      },
+      ["google-java-format"] = { prepend_args = { "--aosp" } },
       -- SQL projects do not always have a .sqlfluff/pyproject.toml at the root.
       sqlfluff = { require_cwd = false },
     },

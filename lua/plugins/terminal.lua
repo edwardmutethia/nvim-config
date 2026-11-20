@@ -10,7 +10,7 @@ return {
     size = 20,
     direction = "horizontal",
     shade_terminals = true,
-    float_opts = { border = "curvy" },
+    float_opts = { border = "rounded" },
   },
   config = function(_, opts)
     require("toggleterm").setup(opts)

@@ -5,6 +5,7 @@ return {
     opts = {
       preset = "modern",
       spec = {
+        { "<leader>b", group = "build / tasks" },
         { "<leader>c", group = "code" },
         { "<leader>d", group = "debug" },
         { "<leader>e", group = "explorer" },
@@ -12,6 +13,7 @@ return {
         { "<leader>g", group = "git" },
         { "<leader>h", group = "hunks" },
         { "<leader>j", group = "java" },
+        { "<leader>m", group = "markdown" },
         { "<leader>n", group = "test" },
         { "<leader>r", group = "rust / run" },
         { "<leader>s", group = "session" },

@@ -30,3 +30,23 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = args.buf, silent = true })
   end,
 })
+
+-- Some built-in filetype plugins (Go, Make, etc.) override the global 4-space
+-- settings with noexpandtab/shiftwidth=0. Re-apply them after FileType so code
+-- buffers stay at 4 spaces, including after format-on-save writes. Makefile
+-- recipes keep real tabs because `make` requires them.
+vim.api.nvim_create_autocmd("FileType", {
+  group = group,
+  callback = function()
+    -- Makefile recipes must start with a real tab or `make` will fail. They
+    -- still display at four columns; every other filetype uses real spaces.
+    if vim.bo.filetype == "make" then
+      vim.bo.expandtab = false
+    else
+      vim.bo.expandtab = true
+    end
+    vim.bo.tabstop = 4
+    vim.bo.softtabstop = 4
+    vim.bo.shiftwidth = 4
+  end,
+})

@@ -1,5 +1,24 @@
 local has_rg = vim.fn.executable("rg") == 1
 
+-- Prefer the LSP's project-wide symbol index. Fall back to live grep in files
+-- where no attached language server provides workspace symbols.
+local function workspace_symbols()
+  local builtin = require("telescope.builtin")
+  local has_symbols = false
+  for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+    if client.server_capabilities.workspaceSymbolProvider then
+      has_symbols = true
+      break
+    end
+  end
+
+  if has_symbols then
+    builtin.lsp_dynamic_workspace_symbols()
+  else
+    builtin.live_grep()
+  end
+end
+
 return {
   "nvim-telescope/telescope.nvim",
   branch = "master",
@@ -21,6 +40,7 @@ return {
     { "<leader>fc", "<cmd>Telescope grep_string<CR>", desc = "Grep word under cursor" },
     { "<leader>fb", "<cmd>Telescope buffers<CR>", desc = "Find buffers" },
     { "<leader>fr", "<cmd>Telescope oldfiles<CR>", desc = "Recent files" },
+    { "<leader>fs", workspace_symbols, desc = "Find symbol in project" },
     { "<leader>fh", "<cmd>Telescope help_tags<CR>", desc = "Search help" },
     { "<leader>fk", "<cmd>Telescope keymaps<CR>", desc = "Search keymaps" },
   },

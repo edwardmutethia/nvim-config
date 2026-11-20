@@ -119,6 +119,10 @@ return {
       },
     }
 
+    -- nvim-dap reads .vscode/launch.json automatically whenever <F5> starts a
+    -- new session. These configurations are the fallbacks for projects that do
+    -- not have one, so per-project launch.json files just work with no extra
+    -- setup or prompting.
     local native_launch = {
       type = "codelldb",
       request = "launch",
@@ -215,6 +219,16 @@ return {
     for _, ft in ipairs({ "javascript", "javascriptreact", "typescript", "typescriptreact" }) do
       dap.configurations[ft] = vim.list_extend(vim.deepcopy(node_configs), vim.deepcopy(browser_configs))
     end
+
+    -- Overseer is set up with dap=false so pressing a build key cannot pull the
+    -- debugger in as a side effect. Now that DAP is loaded, enable its
+    -- preLaunchTask/postDebugTask integration if Overseer is available.
+    vim.defer_fn(function()
+      local ok, overseer = pcall(require, "overseer")
+      if ok and type(overseer.enable_dap) == "function" then
+        overseer.enable_dap()
+      end
+    end, 0)
 
     vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError", linehl = "", numhl = "" })
     vim.fn.sign_define("DapBreakpointCondition", { text = "◆", texthl = "DiagnosticWarn", linehl = "", numhl = "" })
