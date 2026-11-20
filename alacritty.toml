@@ -1,0 +1,97 @@
+# Alacritty — VS Code Dark 2026 terminal palette
+
+[general]
+live_config_reload = true
+
+[window]
+dimensions = { columns = 90, lines = 22 }
+padding = { x = 16, y = 16 }
+dynamic_padding = true
+decorations = "Full"
+opacity = 1.0
+startup_mode = "Windowed"
+title = "Alacritty"
+dynamic_title = true
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[font]
+size = 12.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[font.bold_italic]
+family = "JetBrainsMono Nerd Font"
+style = "Bold Italic"
+
+[font.offset]
+x = 0
+y = 1
+
+[cursor]
+style = { shape = "Block", blinking = "Off" }
+unfocused_hollow = true
+thickness = 0.15
+
+[selection]
+save_to_clipboard = true
+
+[mouse]
+hide_when_typing = true
+
+[bell]
+# Visual bell stays disabled; use duration > 0 with an animation to re-enable.
+duration = 0
+
+[colors.primary]
+background = "#191a1b"
+foreground = "#cccccc"
+dim_foreground = "#8c8c8c"
+
+[colors.cursor]
+text = "#191a1b"
+cursor = "#bfbfbf"
+
+[colors.selection]
+text = "#cccccc"
+background = "#1f323b"
+
+[colors.search.matches]
+foreground = "#cccccc"
+background = "#20414f"
+
+[colors.search.focused_match]
+foreground = "#cccccc"
+background = "#214555"
+
+[colors.normal]
+black   = "#000000"
+red     = "#cd3131"
+green   = "#0dbc79"
+yellow  = "#e5e510"
+blue    = "#2472c8"
+magenta = "#bc3fbc"
+cyan    = "#11a8cd"
+white   = "#e5e5e5"
+
+[colors.bright]
+black   = "#666666"
+red     = "#f14c4c"
+green   = "#23d18b"
+yellow  = "#f5f543"
+blue    = "#3b8eea"
+magenta = "#d670d6"
+cyan    = "#29b8db"
+white   = "#e5e5e5"

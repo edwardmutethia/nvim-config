@@ -33,6 +33,7 @@ Rust, Python, Go, TypeScript/JavaScript, React, HTML, CSS, C, C++, Java, and SQL
 | --- | --- |
 | `~/.config/nvim/` | Neovim config (this directory) |
 | `tmux.conf` (symlinked to `~/.tmux.conf`) | tmux prefix, splits, windows, copy mode, status line |
+| `alacritty.toml` (symlinked to `~/.config/alacritty/alacritty.toml`) | Terminal colors, font, and 90×25 startup size |
 | `~/.config/starship.toml` | Prompt |
 | `~/.zshrc` | Shell behavior, history, completion, `JAVA_HOME`/`PATH` |
 
@@ -41,6 +42,8 @@ After changing a config, restart Neovim. For plugin changes also run
 
 ## Latest additions
 
+- **VS Code Dark 2026** — Alacritty and Neovim share one palette; both configs
+  are tracked here.
 - `<leader>fs` — project-wide symbol search (LSP, with ripgrep fallback).
 - `<leader>bb` / `<leader>bt` / `<leader>br` / `<leader>bo` — smart builds and
   task management with quickfix errors.
@@ -931,8 +934,8 @@ still contains `eval "$(starship init zsh)"`.
   diffview.nvim, layout-preserving buffer close via mini.bufremove.
 - **Markdown**: render-markdown.nvim — in-place rendered preview; README files
   auto-preview in Neo-tree.
-- **UI**: Catppuccin, Lualine, which-key, dressing, nvim-notify, sessions, and
-  Fidget LSP progress.
+- **UI**: Dark 2026 (VS Code 2026), Lualine, which-key, dressing, nvim-notify,
+  sessions, and Fidget LSP progress.
 - **Git**: gitsigns, diffview.nvim, lazygit.
 
 ## Appendix C — Productivity playbooks

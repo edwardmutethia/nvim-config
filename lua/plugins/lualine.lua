@@ -3,7 +3,7 @@ return {
   dependencies = { "nvim-tree/nvim-web-devicons" },
   opts = {
     options = {
-      theme = "auto", -- follow the active colorscheme (Catppuccin)
+      theme = "auto", -- follow the active colorscheme (Dark 2026)
       globalstatus = true,
       component_separators = { left = "", right = "" },
       section_separators = { left = "", right = "" },
