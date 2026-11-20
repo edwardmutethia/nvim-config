@@ -7,6 +7,18 @@ return {
   config = function()
     local applying = false
 
+    -- A quiet current-line highlight: only a few shades away from the base
+    -- background, so it stays visible without fighting the terminal theme.
+    local function apply_cursorline_highlights()
+      if vim.o.background == "dark" then
+        vim.api.nvim_set_hl(0, "CursorLine", { bg = "#242538", bold = false })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#9399b2", bg = "NONE", bold = false })
+      else
+        vim.api.nvim_set_hl(0, "CursorLine", { bg = "#e8eaf1", bold = false })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#6c6f85", bg = "NONE", bold = false })
+      end
+    end
+
     local function apply()
       if applying then return end
       applying = true
@@ -38,6 +50,7 @@ return {
         },
       })
       vim.cmd.colorscheme("catppuccin")
+      apply_cursorline_highlights()
 
       applying = false
     end
@@ -48,6 +61,11 @@ return {
     vim.api.nvim_create_autocmd("OptionSet", {
       pattern = "background",
       callback = function() vim.schedule(apply) end,
+    })
+
+    -- Keep the subtle cursor-line colors if the colorscheme is re-applied.
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      callback = function() vim.schedule(apply_cursorline_highlights) end,
     })
   end,
 }

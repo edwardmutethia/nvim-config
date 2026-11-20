@@ -15,7 +15,7 @@ return {
   opts = {
     sources = { "filesystem", "buffers", "git_status" },
     source_selector = {
-      winbar = true,
+      winbar = false,
       statusline = false,
     },
     window = {

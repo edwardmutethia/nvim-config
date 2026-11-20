@@ -29,7 +29,13 @@ return {
       "python",
       "javascript",
       "typescript",
+      "tsx",
+      "css",
+      "scss",
+      "html",
+      "sql",
       "go",
+      "java",
     })
   end,
 }

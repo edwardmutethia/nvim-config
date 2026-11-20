@@ -22,7 +22,11 @@ return {
   config = function()
     local dap = require("dap")
 
-    require("mason-nvim-dap").setup({ ensure_installed = { "codelldb" } })
+    -- Mason installs and auto-registers codelldb (C/C++/Rust), debugpy
+    -- (Python), delve (Go). js-debug-adapter is registered manually below.
+    require("mason-nvim-dap").setup({
+      ensure_installed = { "codelldb", "python", "delve", "js" },
+    })
 
     require("nvim-dap-virtual-text").setup({
       commented = true,
@@ -54,6 +58,163 @@ return {
         name = "Attach to running Neovim instance",
       },
     }
+
+    -- Define the common adapters explicitly. mason-nvim-dap also registers
+    -- these when its registry has refreshed, but defining them here makes
+    -- debugging available immediately after installation.
+    local function path_or(name)
+      local path = vim.fn.exepath(name)
+      return path ~= "" and path or name
+    end
+
+    dap.adapters.python = {
+      type = "executable",
+      command = path_or("debugpy-adapter"),
+    }
+    dap.adapters.delve = {
+      type = "server",
+      port = "${port}",
+      executable = {
+        command = path_or("dlv"),
+        args = { "dap", "-l", "127.0.0.1:${port}" },
+      },
+    }
+    dap.adapters.codelldb = {
+      type = "server",
+      port = "${port}",
+      executable = {
+        command = path_or("codelldb"),
+        args = { "--port", "${port}" },
+      },
+    }
+
+    dap.configurations.python = {
+      {
+        type = "python",
+        request = "launch",
+        name = "Python: launch file",
+        program = "${file}",
+        cwd = "${workspaceFolder}",
+        console = "integratedTerminal",
+        justMyCode = false,
+      },
+    }
+
+    dap.configurations.go = {
+      {
+        type = "delve",
+        request = "launch",
+        name = "Go: debug file",
+        mode = "debug",
+        program = "${file}",
+        cwd = "${workspaceFolder}",
+      },
+      {
+        type = "delve",
+        request = "launch",
+        name = "Go: debug tests",
+        mode = "test",
+        program = "${file}",
+        cwd = "${workspaceFolder}",
+      },
+    }
+
+    local native_launch = {
+      type = "codelldb",
+      request = "launch",
+      name = "LLDB: launch executable",
+      program = function()
+        return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+      end,
+      cwd = "${workspaceFolder}",
+      stopOnEntry = false,
+      console = "integratedTerminal",
+    }
+    dap.configurations.c = { vim.deepcopy(native_launch) }
+    dap.configurations.cpp = { vim.deepcopy(native_launch) }
+
+    dap.configurations.java = dap.configurations.java or {}
+    if #dap.configurations.java == 0 then
+      table.insert(dap.configurations.java, {
+        type = "java",
+        request = "launch",
+        name = "Java: launch main class",
+        mainClass = function()
+          return vim.fn.input("Main class: ", "", "file")
+        end,
+        console = "integratedTerminal",
+      })
+    end
+
+    dap.configurations.rust = dap.configurations.rust or {}
+    if #dap.configurations.rust == 0 then
+      table.insert(dap.configurations.rust, vim.deepcopy(native_launch))
+    end
+
+    -- JavaScript / TypeScript / React debugging via Mason's js-debug-adapter.
+    local function js_debug_adapter(callback)
+      local ok, pkg = pcall(require("mason-registry").get_package, "js-debug-adapter")
+      if ok and pkg and pkg:is_installed() then
+        local server = vim.fs.joinpath(pkg:get_install_path(), "js-debug/src/dapDebugServer.js")
+        if vim.fn.filereadable(server) == 1 then
+          callback({
+            type = "server",
+            host = "127.0.0.1",
+            port = "${port}",
+            executable = { command = "node", args = { server, "${port}" } },
+          })
+          return
+        end
+      end
+
+      local js_debug = vim.fn.exepath("js-debug-adapter")
+      callback({
+        type = "server",
+        host = "127.0.0.1",
+        port = "${port}",
+        executable = {
+          command = js_debug ~= "" and js_debug or "js-debug-adapter",
+          args = { "${port}" },
+        },
+      })
+    end
+
+    dap.adapters["pwa-node"] = js_debug_adapter
+    dap.adapters["pwa-chrome"] = js_debug_adapter
+
+    local node_configs = {
+      {
+        type = "pwa-node",
+        request = "launch",
+        name = "JS/TS: Launch file",
+        program = "${file}",
+        cwd = "${workspaceFolder}",
+        console = "integratedTerminal",
+        skipFiles = { "<node_internals>/**" },
+      },
+      {
+        type = "pwa-node",
+        request = "attach",
+        name = "JS/TS: Attach to process",
+        processId = require("dap.utils").pick_process,
+        skipFiles = { "<node_internals>/**" },
+      },
+    }
+
+    local browser_configs = {
+      {
+        type = "pwa-chrome",
+        request = "launch",
+        name = "React: Chrome (http://localhost:5173)",
+        url = "http://localhost:5173",
+        webRoot = "${workspaceFolder}",
+        sourceMaps = true,
+      },
+    }
+
+    for _, ft in ipairs({ "javascript", "javascriptreact", "typescript", "typescriptreact" }) do
+      dap.configurations[ft] = vim.list_extend(vim.deepcopy(node_configs), vim.deepcopy(browser_configs))
+    end
 
     vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError", linehl = "", numhl = "" })
     vim.fn.sign_define("DapBreakpointCondition", { text = "◆", texthl = "DiagnosticWarn", linehl = "", numhl = "" })

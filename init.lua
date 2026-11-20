@@ -28,4 +28,5 @@ require("autocmds")
 require("lazy").setup("plugins", {
   change_detection = { notify = false },
   ui = { border = "rounded" },
+  rocks = { enabled = false }, -- no plugin here needs luarocks
 })

@@ -1,4 +1,35 @@
-local servers = { "lua_ls", "rust_analyzer" }
+-- nvim-lspconfig server names (mason-lspconfig maps these to Mason packages).
+local ensure_installed = {
+  "lua_ls",
+  "rust_analyzer",
+  "pyright",
+  "gopls",
+  "ts_ls",
+  "html",
+  "cssls",
+  "jsonls",
+  "emmet_language_server",
+  "sqlls",
+  "clangd",
+  "jdtls",
+  "eslint",
+}
+
+-- rustaceanvim owns rust-analyzer and java.lua owns jdtls, so neither is
+-- enabled here. eslint-lsp only attaches in projects that have eslint config.
+local enabled_servers = {
+  "lua_ls",
+  "pyright",
+  "gopls",
+  "ts_ls",
+  "html",
+  "cssls",
+  "jsonls",
+  "emmet_language_server",
+  "sqlls",
+  "clangd",
+  "eslint",
+}
 
 return {
   {
@@ -10,11 +41,15 @@ return {
     "mason-org/mason-lspconfig.nvim",
     lazy = false,
     dependencies = { "mason-org/mason.nvim" },
-    opts = { ensure_installed = servers },
+    opts = {
+      ensure_installed = ensure_installed,
+      -- We enable only the servers we explicitly manage below.
+      automatic_enable = false,
+    },
   },
   {
     "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
+    lazy = false,
     dependencies = {
       "mason-org/mason.nvim",
       "mason-org/mason-lspconfig.nvim",
@@ -26,6 +61,8 @@ return {
       )
       vim.lsp.config("*", { capabilities = capabilities })
 
+      -- Breadcrumbs are intentionally disabled for a minimal UI.
+
       vim.lsp.config("lua_ls", {
         settings = {
           Lua = {
@@ -36,16 +73,101 @@ return {
         },
       })
 
-      vim.lsp.config("rust_analyzer", {
+      vim.lsp.config("pyright", {
         settings = {
-          ["rust-analyzer"] = {
-            cargo = { allFeatures = true },
-            check = { command = "clippy" },
+          pyright = { disableTaggedHints = true },
+          python = { analysis = { autoSearchPaths = true, useLibraryCodeForTypes = true } },
+        },
+      })
+
+      vim.lsp.config("gopls", {
+        -- `gotmpl` is not a registered Neovim filetype; keep the config to
+        -- recognized Go filetypes so :checkhealth stays clean.
+        filetypes = { "go", "gomod", "gowork" },
+        settings = {
+          gopls = {
+            semanticTokens = true,
+            ui = { completion = { usePlaceholders = true } },
+            hints = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              compositeLiteralTypes = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
+            },
           },
         },
       })
 
-      vim.lsp.enable(servers)
+      vim.lsp.config("ts_ls", {
+        init_options = { hostInfo = "neovim" },
+        settings = {
+          javascript = {
+            format = { enable = false }, -- Prettier owns formatting.
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+            },
+          },
+          typescript = {
+            format = { enable = false }, -- Prettier owns formatting.
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+            },
+          },
+        },
+      })
+
+      -- Prettier owns formatting for web files; these servers only lint/complete.
+      vim.lsp.config("html", {
+        init_options = {
+          provideFormatter = false,
+          embeddedLanguages = { css = true, javascript = true },
+          configurationSection = { "html", "css", "javascript" },
+        },
+      })
+
+      vim.lsp.config("cssls", {
+        init_options = { provideFormatter = false },
+        settings = {
+          css = { validate = true },
+          scss = { validate = true },
+          less = { validate = true },
+        },
+      })
+
+      vim.lsp.config("sqlls", {
+        root_markers = { ".sqllsrc.json", "package.json", ".git" },
+      })
+
+      vim.lsp.config("clangd", {
+        -- lspconfig advertises c.doxygen/cpp.doxygen, which are not real
+        -- Neovim filetypes and produce checkhealth warnings.
+        filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+        cmd = {
+          "clangd",
+          "--background-index",
+          "--clang-tidy",
+          "--completion-style=detailed",
+          "--header-insertion=never",
+          "--fallback-style=WebKit",
+        },
+      })
+
+      vim.lsp.enable(enabled_servers)
 
       vim.diagnostic.config({
         virtual_text = { spacing = 2, prefix = "●" },
@@ -66,6 +188,11 @@ return {
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp_attach", { clear = true }),
         callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if not client then
+            return
+          end
+
           local function map(mode, lhs, rhs, desc)
             vim.keymap.set(mode, lhs, rhs, { buffer = args.buf, silent = true, desc = desc })
           end
@@ -74,10 +201,24 @@ return {
           map("n", "gd", vim.lsp.buf.definition, "Go to definition")
           map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
           map("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
-          map("n", "gr", vim.lsp.buf.references, "List references")
+          -- `grr` is Neovim's built-in references mapping; don't shadow its
+          -- `gr*` family (gra/grn/gri/grt/grx) with a prefix mapping.
           map("n", "<C-k>", vim.lsp.buf.signature_help, "Signature help")
           map("n", "<leader>ca", vim.lsp.buf.code_action, "Code action")
           map("n", "<leader>cr", vim.lsp.buf.rename, "Rename symbol")
+          map("n", "<leader>cR", vim.lsp.buf.references, "List references")
+          map("n", "<leader>cT", vim.lsp.buf.type_definition, "Go to type definition")
+          map("n", "<leader>cl", vim.lsp.codelens.run, "Run code lens")
+          map("n", "<leader>ci", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }), { bufnr = 0 })
+          end, "Toggle inlay hints")
+
+          if client.server_capabilities.inlayHintProvider then
+            vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+          end
+          if client.server_capabilities.codeLensProvider then
+            vim.lsp.codelens.enable(true, { bufnr = args.buf })
+          end
         end,
       })
     end,
