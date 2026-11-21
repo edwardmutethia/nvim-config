@@ -1,4 +1,4 @@
-# Alacritty — VS Code Dark 2026 terminal palette
+# Alacritty — GNOME Adwaita Dark (matches the dark title bar/headerbar palette)
 
 [general]
 live_config_reload = true
@@ -56,42 +56,47 @@ hide_when_typing = true
 duration = 0
 
 [colors.primary]
-background = "#191a1b"
-foreground = "#cccccc"
-dim_foreground = "#8c8c8c"
+background = "#222226"
+foreground = "#ffffff"
+dim_foreground = "#c0bfbc"
+bright_foreground = "#ffffff"
 
 [colors.cursor]
-text = "#191a1b"
-cursor = "#bfbfbf"
+text = "#222226"
+cursor = "#ffffff"
+
+[colors.vi_mode_cursor]
+text = "#222226"
+cursor = "#3584e4"
 
 [colors.selection]
-text = "#cccccc"
-background = "#1f323b"
+text = "#ffffff"
+background = "#3584e4"
 
 [colors.search.matches]
-foreground = "#cccccc"
-background = "#20414f"
+foreground = "#222226"
+background = "#f6d32d"
 
 [colors.search.focused_match]
-foreground = "#cccccc"
-background = "#214555"
+foreground = "#222226"
+background = "#33d17a"
 
 [colors.normal]
-black   = "#000000"
-red     = "#cd3131"
-green   = "#0dbc79"
-yellow  = "#e5e510"
-blue    = "#2472c8"
-magenta = "#bc3fbc"
-cyan    = "#11a8cd"
-white   = "#e5e5e5"
+black   = "#3d3846"
+red     = "#f66151"
+green   = "#33d17a"
+yellow  = "#f6d32d"
+blue    = "#3584e4"
+magenta = "#c061cb"
+cyan    = "#2190a4"
+white   = "#c0bfbc"
 
 [colors.bright]
-black   = "#666666"
-red     = "#f14c4c"
-green   = "#23d18b"
-yellow  = "#f5f543"
-blue    = "#3b8eea"
-magenta = "#d670d6"
-cyan    = "#29b8db"
-white   = "#e5e5e5"
+black   = "#5e5c64"
+red     = "#ed333b"
+green   = "#8ff0a4"
+yellow  = "#f9f06b"
+blue    = "#99c1f1"
+magenta = "#dc8add"
+cyan    = "#62a0ea"
+white   = "#ffffff"
