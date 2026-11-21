@@ -33,7 +33,7 @@ Rust, Python, Go, TypeScript/JavaScript, React, HTML, CSS, C, C++, Java, and SQL
 | --- | --- |
 | `~/.config/nvim/` | Neovim config (this directory) |
 | `tmux.conf` (symlinked to `~/.tmux.conf`) | tmux prefix, splits, windows, copy mode, status line |
-| `alacritty.toml` (symlinked to `~/.config/alacritty/alacritty.toml`) | Terminal colors, font, and 90×25 startup size |
+| `alacritty.toml` (symlinked to `~/.config/alacritty/alacritty.toml`) | Terminal colors, font, and 90×22 startup size |
 | `~/.config/starship.toml` | Prompt |
 | `~/.zshrc` | Shell behavior, history, completion, `JAVA_HOME`/`PATH` |
 
