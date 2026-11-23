@@ -24,6 +24,7 @@ vim.opt.rtp:prepend(lazypath)
 require("options")
 require("keymaps")
 require("autocmds")
+require("beginner") -- :NvimGuide / <leader>H, no plugin required
 
 require("lazy").setup("plugins", {
   change_detection = { notify = false },

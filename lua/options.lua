@@ -26,9 +26,10 @@ opt.tabstop = 4
 opt.softtabstop = 4
 opt.shiftwidth = 4
 
--- Line numbers (kept from your original config)
+-- Absolute line numbers are easier when you are starting out; <leader>ur
+-- switches to relative numbers when you want fast `5j`-style motions.
 opt.number = true
-opt.relativenumber = true
+opt.relativenumber = false
 
 -- Core editor behaviour
 opt.termguicolors = true
@@ -52,7 +53,7 @@ opt.cursorline = true
 opt.scrolloff = 8
 opt.sidescrolloff = 8
 opt.updatetime = 250
-opt.timeoutlen = 400
+opt.timeoutlen = 300
 opt.showmode = false
 opt.completeopt = { "menu", "menuone", "noselect" }
 opt.fillchars = { eob = " " }

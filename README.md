@@ -9,6 +9,20 @@ exercises, then use Part IV as your everyday cheat sheet.
 Everything is installed locally (no sudo) and tuned for polyglot work: Lua,
 Rust, Python, Go, TypeScript/JavaScript, React, HTML, CSS, C, C++, Java, and SQL.
 
+## 60-second quick start
+
+New here? Press **Space H** (or run `:NvimGuide`) for a one-screen cheat sheet
+that lives inside Neovim. Then try this:
+
+1. `nvim .` — open the current folder.
+2. `Space H` — read the quick guide; press `q` to close it.
+3. `Ctrl-p` — find a file by name; press `Enter` to open it.
+4. `i` — type; `Esc` — stop typing; `Ctrl-s` — save.
+5. `s` — type a couple of letters to jump anywhere on screen.
+6. `Space ?` — see every key; `Space fk` — search the keymaps.
+
+You do not need to memorize the rest. Press **Space** and wait for which-key.
+
 ---
 
 ## How to use this guide
@@ -16,9 +30,9 @@ Rust, Python, Go, TypeScript/JavaScript, React, HTML, CSS, C, C++, Java, and SQL
 - Each lesson has a **Goal**, a **Learn** table, a **Try it** drill, and a
   **Checkpoint**. Do not skip the drills; muscle memory is the point.
 - `<leader>` means **Space**. `<localleader>` means **`\`** (backslash).
-- Press **Space** and wait ~400 ms: which-key shows the available chords.
-- `<leader>?` opens the full which-key keymap browser. For a searchable list,
-  use `<leader>fk`.
+- Press **Space** and wait ~300 ms: which-key shows the available chords.
+- `<leader>H` opens the in-editor quick guide; `<leader>?` opens the full
+  which-key keymap browser. For a searchable list, use `<leader>fk`.
 - Tags in the tables:
   - **[CFG]** — explicitly configured in this repo.
   - **[PLUGIN]** — default from an installed plugin, active because the config
@@ -33,7 +47,6 @@ Rust, Python, Go, TypeScript/JavaScript, React, HTML, CSS, C, C++, Java, and SQL
 | --- | --- |
 | `~/.config/nvim/` | Neovim config (this directory) |
 | `tmux.conf` (symlinked to `~/.tmux.conf`) | tmux prefix, splits, windows, copy mode, status line |
-| `alacritty.toml` (symlinked to `~/.config/alacritty/alacritty.toml`) | Terminal colors, font, and 90×22 startup size |
 | `~/.config/starship.toml` | Prompt |
 | `~/.zshrc` | Shell behavior, history, completion, `JAVA_HOME`/`PATH` |
 
@@ -42,9 +55,16 @@ After changing a config, restart Neovim. For plugin changes also run
 
 ## Latest additions
 
-- **GNOME Adwaita Dark in Alacritty** — terminal palette derived from the dark
-  title bar/headerbar colors, so the whole window looks like one surface;
-  Neovim's transparent Catppuccin Mocha blends into it.
+- `<leader>H` / `:NvimGuide` — in-editor quick-start guide for beginners.
+- Absolute line numbers by default; `<leader>ur` toggles relative numbers for
+  fast `5j`-style motions.
+- `<C-s>` saves from Normal **or** Insert mode; `<C-d>` / `<C-u>` scroll with
+  the cursor centred.
+- `<leader>y` / `<leader>p` / `<leader>D` — clipboard-aware copy, paste, and
+  delete without yanking.
+- `<leader>wv` / `<leader>wh` / `<leader>we` / `<leader>wo` — quick splits;
+  `<leader><leader>` jumps back to the previous file.
+- `[q` / `]q` — step through compiler errors in the quickfix list.
 - **Catppuccin Mocha, transparent** — Neovim uses the Mocha palette but leaves
   the background to the terminal, so it blends with any terminal theme.
 - `<leader>fs` — project-wide symbol search (LSP, with ripgrep fallback).
@@ -82,10 +102,12 @@ Neovim is modal. The same key means different things in different modes:
 | --- | --- | --- |
 | `<leader>` = `Space` | Prefix for almost every custom command | [CFG] |
 | `<localleader>` = `\` | Prefix used inside grug-far buffers | [CFG] |
+| `<leader>H` | Open the beginner quick-start guide | [CFG] |
 | `<leader>?` | Open the full which-key browser | [CFG] |
 | `Space`, wait | Open the which-key menu for a group | [CFG] |
+| `<C-s>` | Save the current file, even from Insert mode | [CFG] |
 | `q` | Close helper windows (help, quickfix, checkhealth, lspinfo, man, notify, Trouble) | [CFG] |
-| `timeoutlen = 400` | How long which-key waits before showing hints | [CFG] |
+| `timeoutlen = 300` | How long which-key waits before showing hints | [CFG] |
 
 The configured which-key groups are:
 
@@ -202,6 +224,9 @@ screen with two keystrokes.
 | `d{motion}` / `c{motion}` / `y{motion}` | Delete / change / yank region | [VIM] |
 | `dd` / `cc` / `yy` | Same, linewise | [VIM] |
 | `p` / `P` | Paste after / before cursor | [VIM] |
+| `<leader>y` / `<leader>Y` | Copy selection / whole line to system clipboard | [CFG] |
+| `<leader>p` | Paste from system clipboard (Visual: keep selection) | [CFG] |
+| `<leader>D` | Delete without filling the clipboard | [CFG] |
 | `u` / `<C-r>` | Undo / redo | [VIM] |
 | `.` | Repeat the last change | [VIM] |
 | `x` / `~` | Delete char / toggle case | [VIM] |
@@ -291,11 +316,16 @@ leaving the keyboard.
 | `<C-h>` / `<C-j>` / `<C-k>` / `<C-l>` | Focus left / lower / upper / right window | [CFG] |
 | `<C-Up>` / `<C-Down>` | Grow / shrink window height | [CFG] |
 | `<C-Left>` / `<C-Right>` | Shrink / grow window width | [CFG] |
+| `<C-d>` / `<C-u>` | Scroll half a page down / up, cursor centred | [CFG] |
 | `<Tab>` / `<S-Tab>` | Next / previous buffer | [CFG] |
+| `<leader><leader>` | Jump to previously open buffer | [CFG] |
 | `<C-o>` / `<C-i>` | Jump back / forward to previous cursor positions | [VIM] |
-| `<leader>ws` | Save buffer | [CFG] |
+| `<leader>ws` / `<C-s>` | Save buffer (Insert mode included) | [CFG] |
+| `<leader>wv` / `<leader>wh` | Vertical / horizontal split | [CFG] |
+| `<leader>we` / `<leader>wo` | Equalize splits / keep only current split | [CFG] |
 | `<leader>wq` | Close buffer, **keep window layout** | [CFG] |
 | `<leader>wQ` | Force-close buffer, **keep window layout** | [CFG] |
+| `<leader>ur` | Toggle relative line numbers | [CFG] |
 | `q` | Close helper windows | [CFG] |
 
 `wq`/`wQ` use `mini.bufremove`; unlike plain `:bdelete`, they will not collapse
@@ -408,8 +438,8 @@ Inside Aerial [PLUGIN]: `?` help, `<CR>` jump to symbol, `p` scroll symbol
 preview, `<C-j>`/`<C-k>` move and scroll, `o` fold/unfold, `q` close.
 
 If `K` shows only a signature or nothing at all, that language server does not
-expose documentation for that symbol. Confirm the server with `:LspInfo` and
-install it through `:Mason` if needed.
+expose documentation for that symbol. Check the server with
+`:checkhealth vim.lsp` and install it through `:Mason` if needed.
 
 ### Learn — diagnostics & symbols [CFG]
 
@@ -475,6 +505,7 @@ current/vsplit/split/tab/float, `p` preview, `{`/`}` previous/next task.
 | Keys | Action |
 | --- | --- |
 | `<leader>xq` | Open quickfix via Trouble |
+| `]q` / `[q` | Next / previous error (same as `:cnext` / `:cprev`) |
 | `:cnext` / `:cprev` | Next / previous error |
 | `:cc` | Show current error |
 | `:copen` / `:cclose` | Native quickfix window |
@@ -676,7 +707,7 @@ Documentation is a first-class buffer, not a separate browser tab.
 - JS/TS/React linting needs a project ESLint config. Prettier, Vitest, Jest,
   and npm packages are per-project.
 - C/C++ prefers `compile_commands.json`; CMake projects can use the ctest
-  adapter. SQL uses `sqlls` + `sqlfluff`.
+  adapter. SQL uses `sqls` + `sqlfluff`.
 - Remote providers are disabled; `:checkhealth` warnings about optional Ruby,
   Gem, Composer, PHP, and Julia are harmless.
 
@@ -803,7 +834,10 @@ still contains `eval "$(starship init zsh)"`.
 
 | Keys | Action |
 | --- | --- |
+| `<leader><leader>` | Jump to previous buffer |
 | `<leader>?` | Show all keymaps |
+| `<leader>H` | Open beginner quick-start guide |
+| `<leader>D` | Delete without yanking |
 | `<leader>bb` | Build current project |
 | `<leader>br` | Restart last task |
 | `<leader>bo` | Open last task output |
@@ -861,6 +895,7 @@ still contains `eval "$(starship init zsh)"`.
 | `<leader>no` | Test output |
 | `<leader>nS` | Stop tests |
 | `<leader>o` | Toggle symbol outline |
+| `<leader>p` | Paste from system clipboard (Visual: no yank) |
 | `<leader>rr` | Rust runnables |
 | `<leader>rd` | Rust debuggables |
 | `<leader>rt` | Rust testables |
@@ -874,10 +909,15 @@ still contains `eval "$(starship init zsh)"`.
 | `<leader>tt` | Floating terminal |
 | `<leader>tg` | Lazygit float |
 | `<leader>uh` | Clear search highlight |
+| `<leader>ur` | Toggle relative line numbers |
+| `<leader>us` | Toggle spell check |
 | `<leader>uw` | Toggle line wrap |
 | `<leader>ws` | Save buffer |
+| `<leader>wv` / `<leader>wh` | Vertical / horizontal split |
+| `<leader>we` / `<leader>wo` | Equalize splits / keep only current split |
 | `<leader>wq` | Close buffer, keep layout |
 | `<leader>wQ` | Force-close buffer, keep layout |
+| `<leader>y` / `<leader>Y` | Copy to system clipboard / whole line |
 | `<leader>xx` | Workspace diagnostics |
 | `<leader>xX` | Buffer diagnostics |
 | `<leader>xq` | Quickfix list |
@@ -893,13 +933,16 @@ still contains `eval "$(starship init zsh)"`.
 | Normal | `<C-h/j/k/l>` | Move focus between splits |
 | Normal | `<C-Up/Down>` | Grow / shrink height |
 | Normal | `<C-Left/Right>` | Shrink / grow width |
+| Normal | `<C-d>` / `<C-u>` | Centered half-page scroll down / up |
 | Normal | `<Tab>` / `<S-Tab>` | Next / previous buffer |
 | Normal | `n` / `N` | Centered next / previous search result |
+| Normal | `[q` / `]q` | Previous / next quickfix error |
 | Normal | `<C-o>` / `<C-i>` | Jump back / forward in the jumplist (return after `gd`) |
 | Normal | `<C-\>` | Toggle default terminal |
 | Normal | `<C-w>d` | Diagnostic under cursor |
 | Visual | `J` / `K` | Move selection down / up |
 | Visual | `<` / `>` | Outdent / indent selection |
+| Normal / Insert | `<C-s>` | Save buffer |
 | Insert | `<Tab>` / `<S-Tab>` | Completion / snippet navigation |
 | Insert | `<C-Space>`, `<CR>`, `<C-e>`, `<C-b>`, `<C-f>` | Completion control |
 | Terminal | `<C-\><C-n>` | Back to Normal mode |
@@ -919,7 +962,7 @@ still contains `eval "$(starship init zsh)"`.
 ## Appendix B — What is included
 
 - **LSP**: `lua_ls`, `pyright`, `gopls`, `ts_ls`, `html`, `cssls`, `jsonls`,
-  `emmet_language_server`, `sqlls`, `clangd`, `eslint`. `rust_analyzer` is owned
+  `emmet_language_server`, `sqls`, `clangd`, `eslint`. `rust_analyzer` is owned
   by rustaceanvim; `jdtls` by nvim-jdtls (JavaSE-21 runtime).
 - **Completion**: nvim-cmp + LuaSnip + friendly snippets.
 - **Formatting** (format-on-save): StyLua, rustfmt, `ruff_fix` + `ruff_format`,
@@ -938,7 +981,8 @@ still contains `eval "$(starship init zsh)"`.
 - **Markdown**: render-markdown.nvim — in-place rendered preview; README files
   auto-preview in Neo-tree.
 - **UI**: Catppuccin Mocha (transparent), Lualine, which-key, dressing,
-  nvim-notify, sessions, and Fidget LSP progress.
+  nvim-notify, sessions, Fidget LSP progress, and a built-in `:NvimGuide`
+  beginner cheat sheet.
 - **Git**: gitsigns, diffview.nvim, lazygit.
 
 ## Appendix C — Productivity playbooks
@@ -1041,7 +1085,7 @@ Common fixes:
 - **Icons look wrong** — use **JetBrainsMono Nerd Font**.
 - **tmux colors flat** — `TERM=tmux-256color` inside tmux and truecolor enabled
   in the terminal; the config sets RGB overrides automatically.
-- **Which-key feels slow** — `timeoutlen` is 400 ms in `lua/options.lua`.
+- **Which-key feels slow** — `timeoutlen` is 300 ms in `lua/options.lua`.
 
 Known key conflicts worth remembering:
 

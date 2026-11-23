@@ -9,7 +9,9 @@ local ensure_installed = {
   "cssls",
   "jsonls",
   "emmet_language_server",
-  "sqlls",
+  -- `sqlls` is Node-based and crashes on Node 26 (ERR_PACKAGE_PATH_NOT_EXPORTED);
+  -- `sqls` is a self-contained Go server.
+  "sqls",
   "clangd",
   "jdtls",
   "eslint",
@@ -26,7 +28,7 @@ local enabled_servers = {
   "cssls",
   "jsonls",
   "emmet_language_server",
-  "sqlls",
+  "sqls",
   "clangd",
   "eslint",
 }
@@ -87,7 +89,9 @@ return {
         settings = {
           gopls = {
             semanticTokens = true,
-            ui = { completion = { usePlaceholders = true } },
+            -- gopls v0.24 rejects the legacy `ui.completion.usePlaceholders`
+            -- nested key; the setting is now top-level.
+            usePlaceholders = true,
             hints = {
               assignVariableTypes = true,
               compositeLiteralFields = true,
@@ -149,7 +153,7 @@ return {
         },
       })
 
-      vim.lsp.config("sqlls", {
+      vim.lsp.config("sqls", {
         root_markers = { ".sqllsrc.json", "package.json", ".git" },
       })
 
@@ -157,6 +161,13 @@ return {
         -- lspconfig advertises c.doxygen/cpp.doxygen, which are not real
         -- Neovim filetypes and produce checkhealth warnings.
         filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+        -- lspconfig still advertises the legacy `offsetEncoding` capability,
+        -- which clangd 23 logs as deprecated. Neovim already sends the standard
+        -- `general.positionEncodings` capability, so strip the old one before
+        -- the initialize request goes out.
+        before_init = function(params)
+          params.capabilities.offsetEncoding = nil
+        end,
         cmd = {
           "clangd",
           "--background-index",

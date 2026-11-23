@@ -12,6 +12,7 @@ return {
         { "<leader>f", group = "find" },
         { "<leader>g", group = "git" },
         { "<leader>h", group = "hunks" },
+        { "<leader>H", desc = "Beginner guide" },
         { "<leader>j", group = "java" },
         { "<leader>m", group = "markdown" },
         { "<leader>n", group = "test" },
