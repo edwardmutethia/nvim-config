@@ -1,0 +1,6 @@
+# Prompt style: [username@hostname current directory]$
+BRACKET_COLOR="\[\033[38;5;35m\]"
+PATH_COLOR="\[\033[38;5;33m\]"
+RESET_COLOR="\[$(tput sgr0)\]"
+
+tty -s && export PS1="$BRACKET_COLOR[\u@\h $PATH_COLOR\W$BRACKET_COLOR]$RESET_COLOR\$ "
