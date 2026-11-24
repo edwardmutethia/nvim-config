@@ -1080,8 +1080,11 @@ Common fixes:
 - **LSP not starting** — `:Mason`, confirm the server is installed, restart
   Neovim.
 - **Formatter missing** — install it with `:Mason` or your package manager.
-- **JS/TS diagnostics missing** — add `eslint.config.mjs` (or legacy config) to
-  the project.
+- **JS/TS diagnostics missing** — the project needs both an ESLint config
+  (`eslint.config.mjs` or legacy config) and its dependencies installed
+  (`npm install` / `npm ci`). With a config but no `node_modules`, eslint-lsp
+  reports `[lspconfig] Unable to find ESLint library`; run `:LspRestart` after
+  installing.
 - **Icons look wrong** — use **JetBrainsMono Nerd Font**.
 - **tmux colors flat** — `TERM=tmux-256color` inside tmux and truecolor enabled
   in the terminal; the config sets RGB overrides automatically.
