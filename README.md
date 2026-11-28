@@ -56,7 +56,6 @@ GNOME helpers (installed as extensions, configured through `gsettings`):
 
 | Extension | Job |
 | --- | --- |
-| `deja-window@mcast.gnomext.com` | Restores Ghostty's centered position and size on every launch |
 | `blur-my-shell@aunetx` | Blurs the wallpaper behind Ghostty (GNOME ignores Ghostty's own blur) |
 
 After changing a config, restart Neovim. For plugin changes also run
@@ -97,6 +96,9 @@ After changing a config, restart Neovim. For plugin changes also run
 - **Ghostty terminal** — no titlebar, rounded corners, frosted-glass look,
   centered with edge gaps; **Alt+Arrow** creates panes and **Shift+Arrow** moves
   between them. Full lesson in **Part VI**.
+- **Polished command prompt** — `:` opens a rounded, syntax-highlighted floating
+  prompt with a `❯` glyph and context titles; messages and completions are
+  styled, search stays at the bottom, and `<leader>um` opens the message log.
 
 ---
 
@@ -141,6 +143,18 @@ The configured which-key groups are:
 | `<leader>g` | git | `<leader>w` | buffer / write |
 | `<leader>h` | hunks | `<leader>x` | diagnostics |
 | `<leader>j` | java | `<leader>m` | markdown |
+
+### Learn — the command prompt [CFG]
+
+Pressing `:` no longer uses the thin bottom bar. It opens a centered, rounded
+prompt with a `❯` glyph, a title naming the context (`Command`, `Search`,
+`Shell`, `Lua`, `Help`) and syntax highlighting for the command you type.
+Completions appear directly below it. `/` and `?` keep the classic bottom
+search line so they stay predictable.
+
+Messages, warnings and errors arrive as quiet notifications instead of
+interrupting your editing; search-count chatter is hidden. Press `<leader>um`
+(or run `:Noice`) to review the recent message log when you need the details.
 
 ### Try it
 
@@ -829,13 +843,16 @@ Ensure `TERM=tmux-256color` inside tmux and truecolor in the terminal.
 The prompt is two lines:
 
 ```text
-edward@devops-node ~/projects/myapp on main+? (myenv)
+
+~/projects/myapp on main+? (myenv)
 ❯
 ```
 
+A blank line separates the prompt from the previous command's output.
+
 - Top line:
-  - `user@host` — the account and machine you are on.
-  - `~/path` — the current directory (`~` at home).
+  - `~/path` — the current directory (`~` at home). Inside
+    `~/Projects/open-source` it is shortened to `opensource`.
   - `on main` — the git branch, followed by `+` for staged changes, `~` for
     unstaged changes, and `?` for untracked files (only shown inside a repo).
   - `(name)` — the active Python virtualenv, when one is activated.
@@ -943,6 +960,7 @@ exec zsh
 | `<leader>tt` | Floating terminal |
 | `<leader>tg` | Lazygit float |
 | `<leader>uh` | Clear search highlight |
+| `<leader>um` | Show recent messages (Noice log) |
 | `<leader>ur` | Toggle relative line numbers |
 | `<leader>us` | Toggle spell check |
 | `<leader>uw` | Toggle line wrap |
@@ -1016,9 +1034,9 @@ exec zsh
 - **Markdown**: render-markdown.nvim — in-place rendered preview; README files
   auto-preview in Neo-tree.
 - **UI**: Catppuccin (transparent and light/dark aware by default, `<leader>ut` for solid),
-  bufferline.nvim tab strip, Lualine, which-key, dressing, nvim-notify,
-  sessions, Fidget LSP progress, and a built-in `:NvimGuide` beginner cheat
-  sheet.
+  bufferline.nvim tab strip, Lualine, which-key, dressing, Noice command prompt,
+  nvim-notify, sessions, Fidget LSP progress, and a built-in `:NvimGuide`
+  beginner cheat sheet.
 - **Git**: gitsigns, diffview.nvim, lazygit.
 
 ## Appendix C — Productivity playbooks
@@ -1163,12 +1181,9 @@ no restart needed after an edit.
 and `com.mitchellh.ghostty` is whitelisted. Tune its `sigma` setting for a
 stronger or weaker blur.
 
-**Centering note:** Wayland forbids apps from positioning their own windows, so
-Ghostty's `window-position-x/y` are ignored. The
-`deja-window@mcast.gnomext.com` extension remembers Ghostty's geometry
-(`x=83`, `y=137`, `1204×529`) and restores it on every launch, giving even gaps
-on all four edges of the 1366×768 screen. Drag or resize the window once and
-Deja Window remembers the new layout.
+**Window placement note:** Wayland forbids apps from positioning their own
+windows, so Ghostty's `window-position-x/y` are ignored and placement is
+handled by GNOME.
 
 ### Try it
 

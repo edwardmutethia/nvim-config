@@ -23,6 +23,8 @@ return {
         float = { transparent = vim.g.vscode_transparent, solid = false },
         -- Keep the terminal's own palette for nested shells.
         term_colors = false,
+        -- Match the Noice command prompt and completion popup to the palette.
+        integrations = { noice = true },
         custom_highlights = function(c)
           local solid = not vim.g.vscode_transparent
           -- In solid mode the tab bar is a shade darker than the editor, as in

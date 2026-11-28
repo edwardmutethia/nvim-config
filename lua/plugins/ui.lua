@@ -19,7 +19,8 @@ return {
           return math.floor(vim.o.columns * 0.5)
         end,
       })
-      vim.notify = notify
+      -- Noice owns vim.notify and forwards these notifications to this
+      -- nvim-notify view, so don't replace its handler here.
     end,
   },
 }

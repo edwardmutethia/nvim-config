@@ -16,6 +16,8 @@ return {
       "rust",
       "vim",
       "vimdoc",
+      -- Used by Noice to highlight regexes in the search prompt.
+      "regex",
       "query",
       "bash",
       "json",

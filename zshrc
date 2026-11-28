@@ -61,9 +61,10 @@ command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 
 # ---------- Prompt ----------
-# Two quiet lines: context (user@host, path, git, virtualenv) and a glyph that
-# reports the last command's status. Rendered natively by zsh, so no separate
-# prompt framework has to start with the shell.
+# A blank line separates the prompt from previous output, then two quiet lines:
+# context (path, git, virtualenv) and a glyph reporting the last command's
+# status. Rendered natively by zsh, so no separate prompt framework has to
+# start with the shell.
 setopt PROMPT_SUBST
 autoload -Uz add-zsh-hook add-zle-hook-widget vcs_info
 
@@ -87,6 +88,13 @@ _prompt_precmd() {
     local last_status=$?
     vcs_info
     _prompt_git="${vcs_info_msg_0_}"
+
+    # One friendly label instead of the full path for this workspace.
+    if [[ "$PWD" == "$HOME/Projects/open-source" ]]; then
+        _prompt_dir="opensource"
+    else
+        _prompt_dir="%~"
+    fi
 
     if [[ -n "$VIRTUAL_ENV" ]]; then
         _prompt_venv=" %F{green}(${VIRTUAL_ENV:t})%f"
@@ -117,7 +125,7 @@ _prompt_zle_mode() {
 add-zle-hook-widget zle-line-init _prompt_zle_mode
 add-zle-hook-widget zle-keymap-select _prompt_zle_mode
 
-PROMPT='%F{cyan}%n@%m%f %F{blue}%~%f${_prompt_git}${_prompt_venv}'$'\n''${_prompt_glyph} '
+PROMPT=$'\n''%F{blue}${_prompt_dir}%f${_prompt_git}${_prompt_venv}'$'\n''${_prompt_glyph} '
 RPROMPT=""
 
 # ---------- NVM / Node.js ----------

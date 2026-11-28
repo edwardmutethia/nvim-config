@@ -84,6 +84,8 @@ local lines = {
   "8. Look and feel",
   "----------------",
   "  C-\\ / Ctrl+grave  toggle the terminal panel",
+  "  :                 rounded, highlighted command prompt",
+  "  <leader>um        show recent editor messages",
   "  <leader>ut        transparent (default) / solid background",
   "",
   "9. When something feels wrong",
