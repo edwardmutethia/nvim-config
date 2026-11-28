@@ -1,6 +1,6 @@
 # Developer Environment Bootcamp
 
-### Ghostty · Neovim · tmux · Zsh/Starship
+### Ghostty · Neovim · tmux · Zsh
 
 This is a **hands-on course** for the local development environment on this
 machine. Read Part I once from top to bottom with Neovim open, do the small
@@ -49,7 +49,7 @@ You do not need to memorize the rest. Press **Space** and wait for which-key.
 | `~/.config/ghostty/config` | Ghostty terminal: appearance, font, theme, transparency/blur, pane shortcuts |
 | `~/.config/nvim/` | Neovim config (this directory) |
 | `tmux.conf` (symlinked to `~/.tmux.conf`) | tmux prefix, splits, windows, copy mode, status line |
-| `~/.config/starship.toml` | Prompt |
+| `~/.zshrc` (symlink to `zshrc` in this repo) | Shell prompt, history, completion, PATH, aliases |
 | `~/.zshrc` | Shell behavior, history, completion, `JAVA_HOME`/`PATH` |
 
 GNOME helpers (installed as extensions, configured through `gsettings`):
@@ -824,23 +824,30 @@ Ensure `TERM=tmux-256color` inside tmux and truecolor in the terminal.
 
 ## Lesson 15 — Reading the prompt
 
-**Goal:** Read command status at a glance.
+**Goal:** Read location, source control state, and command status at a glance.
 
 The prompt is two lines:
 
 ```text
-~/projects/myapp
+edward@devops-node ~/projects/myapp on main+? (myenv)
 ❯
 ```
 
-- Top line: **only the current directory name** (`~` at home).
+- Top line:
+  - `user@host` — the account and machine you are on.
+  - `~/path` — the current directory (`~` at home).
+  - `on main` — the git branch, followed by `+` for staged changes, `~` for
+    unstaged changes, and `?` for untracked files (only shown inside a repo).
+  - `(name)` — the active Python virtualenv, when one is activated.
 - Bottom line: colored `❯`:
   - **green** — last command succeeded
-  - **red** — last command failed
+  - **red** — last command failed (the exit code follows the glyph)
   - **blue `❮`** — Zsh vi-command mode
 
-Colors follow Catppuccin Mocha. No git pile, language versions, icons, time, or
-command duration.
+Colors are muted 256-color tones chosen to sit well with the Ghostty /
+Catppuccin setup. The context line is built with Zsh's native `vcs_info`, so
+there is no separate prompt framework to start with the shell: Starship is not
+initialized from `~/.zshrc`. No language versions, clock, or command timing.
 
 Zsh exports local Temurin JDK as `JAVA_HOME` and prepends it to `PATH`, so
 `java`, `javac`, and Java tooling work in the terminal too.
@@ -850,9 +857,6 @@ Reload after editing:
 ```sh
 exec zsh
 ```
-
-Starship is initialized from `~/.zshrc`; if the prompt disappears, ensure it
-still contains `eval "$(starship init zsh)"`.
 
 ---
 

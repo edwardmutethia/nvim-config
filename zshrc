@@ -57,15 +57,68 @@ if command -v fd >/dev/null 2>&1; then
 fi
 
 # ---------- Tools ----------
-command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 
 # ---------- Prompt ----------
-# Same style as bash: [username@hostname folder]$
-# Set after starship so this prompt takes precedence.
-PROMPT='%F{35}[%n@%m %F{33}%1~%F{35}]%f$ '
+# Two quiet lines: context (user@host, path, git, virtualenv) and a glyph that
+# reports the last command's status. Rendered natively by zsh, so no separate
+# prompt framework has to start with the shell.
+setopt PROMPT_SUBST
+autoload -Uz add-zsh-hook add-zle-hook-widget vcs_info
+
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' stagedstr '%F{yellow}+%f'
+zstyle ':vcs_info:git:*' unstagedstr '%F{yellow}~%f'
+zstyle ':vcs_info:git:*' formats ' on %F{magenta}%b%f%u%c%m'
+zstyle ':vcs_info:git:*' actionformats ' on %F{magenta}%b%f%u%c%F{red}|%a%f%m'
+zstyle ':vcs_info:git+set-message:*' hooks git-untracked
+
++vi-git-untracked() {
+    if command -v git >/dev/null 2>&1 &&
+       git rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
+       [[ -n "$(git status --porcelain --untracked-files=normal 2>/dev/null | grep '^??')" ]]; then
+        hook_com[misc]+='%F{yellow}?%f'
+    fi
+}
+
+_prompt_precmd() {
+    local last_status=$?
+    vcs_info
+    _prompt_git="${vcs_info_msg_0_}"
+
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        _prompt_venv=" %F{green}(${VIRTUAL_ENV:t})%f"
+    else
+        _prompt_venv=""
+    fi
+
+    if (( last_status == 0 )); then
+        _prompt_status='%F{green}❯%f'
+    else
+        _prompt_status="%F{red}❯ ${last_status}%f"
+    fi
+    _prompt_glyph="$_prompt_status"
+}
+
+add-zsh-hook precmd _prompt_precmd
+
+# Vi command mode swaps the glyph for a blue ❮; insert mode restores the
+# exit-status glyph. Hooks keep this compatible with zsh-syntax-highlighting.
+_prompt_zle_mode() {
+    if [[ "$KEYMAP" == vicmd ]]; then
+        _prompt_glyph='%F{blue}❮%f'
+    else
+        _prompt_glyph="$_prompt_status"
+    fi
+}
+
+add-zle-hook-widget zle-line-init _prompt_zle_mode
+add-zle-hook-widget zle-keymap-select _prompt_zle_mode
+
+PROMPT='%F{cyan}%n@%m%f %F{blue}%~%f${_prompt_git}${_prompt_venv}'$'\n''${_prompt_glyph} '
 RPROMPT=""
-command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 
 # ---------- NVM / Node.js ----------
 export NVM_DIR="$HOME/.nvm"
