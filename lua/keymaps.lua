@@ -18,9 +18,8 @@ map("n", "<C-Right>", ":vertical resize +2<CR>", opts("Increase window width"))
 map("n", "<C-d>", "<C-d>zz", opts("Scroll down and centre"))
 map("n", "<C-u>", "<C-u>zz", opts("Scroll up and centre"))
 
--- Buffers
-map("n", "<Tab>", ":bnext<CR>", opts("Next buffer"))
-map("n", "<S-Tab>", ":bprevious<CR>", opts("Previous buffer"))
+-- Buffers. Tab / S-Tab, C-Tab / C-S-Tab and Alt+1..9 live in
+-- lua/plugins/tabline.lua so they drive the visible tab strip.
 map("n", "<leader><leader>", ":buffer #<CR>", opts("Jump to previous buffer"))
 map("n", "<leader>ws", ":write<CR>", opts("Save buffer"))
 map("n", "<leader>wv", ":vsplit<CR>", opts("Split vertically"))

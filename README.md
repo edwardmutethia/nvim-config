@@ -1,10 +1,11 @@
 # Developer Environment Bootcamp
 
-### Neovim · tmux · Zsh/Starship
+### Ghostty · Neovim · tmux · Zsh/Starship
 
 This is a **hands-on course** for the local development environment on this
 machine. Read Part I once from top to bottom with Neovim open, do the small
-exercises, then use Part IV as your everyday cheat sheet.
+exercises, read Part VI for the Ghostty terminal you launch it from, then use
+Part IV as your everyday cheat sheet.
 
 Everything is installed locally (no sudo) and tuned for polyglot work: Lua,
 Rust, Python, Go, TypeScript/JavaScript, React, HTML, CSS, C, C++, Java, and SQL.
@@ -45,10 +46,18 @@ You do not need to memorize the rest. Press **Space** and wait for which-key.
 
 | File | What it controls |
 | --- | --- |
+| `~/.config/ghostty/config` | Ghostty terminal: appearance, font, theme, transparency/blur, pane shortcuts |
 | `~/.config/nvim/` | Neovim config (this directory) |
 | `tmux.conf` (symlinked to `~/.tmux.conf`) | tmux prefix, splits, windows, copy mode, status line |
 | `~/.config/starship.toml` | Prompt |
 | `~/.zshrc` | Shell behavior, history, completion, `JAVA_HOME`/`PATH` |
+
+GNOME helpers (installed as extensions, configured through `gsettings`):
+
+| Extension | Job |
+| --- | --- |
+| `deja-window@mcast.gnomext.com` | Restores Ghostty's centered position and size on every launch |
+| `blur-my-shell@aunetx` | Blurs the wallpaper behind Ghostty (GNOME ignores Ghostty's own blur) |
 
 After changing a config, restart Neovim. For plugin changes also run
 `:Lazy install` / `:Lazy check` inside Neovim.
@@ -65,8 +74,16 @@ After changing a config, restart Neovim. For plugin changes also run
 - `<leader>wv` / `<leader>wh` / `<leader>we` / `<leader>wo` — quick splits;
   `<leader><leader>` jumps back to the previous file.
 - `[q` / `]q` — step through compiler errors in the quickfix list.
-- **Catppuccin Mocha, transparent** — Neovim uses the Mocha palette but leaves
-  the background to the terminal, so it blends with any terminal theme.
+- **VSCode-style tab strip** — every open file gets a tab up top with a filetype
+  icon, a dirty dot, an inline problem count and a `×` close button; the strip
+  shares the editor's background and starts to the right of the file explorer.
+- **VSCode-like keys** — `Tab` / `S-Tab` (or `C-Tab` / `C-S-Tab`) switch file
+  tabs, `Alt+1`–`Alt+9` jump to a tab, and `C-\\` (Ctrl+backslash) toggles the
+  terminal (Ctrl+grave works too).
+- **Transparent, terminal-driven Catppuccin theme** — editor, tabs, status line,
+  sidebars and floating windows let the terminal's background show through, and
+  the light/dark palette follows the terminal's own theme; `<leader>ut` toggles
+  a solid variant when you want a fixed backdrop.
 - `<leader>fs` — project-wide symbol search (LSP, with ripgrep fallback).
 - `<leader>bb` / `<leader>bt` / `<leader>br` / `<leader>bo` — smart builds and
   task management with quickfix errors.
@@ -77,6 +94,9 @@ After changing a config, restart Neovim. For plugin changes also run
 - Four-space indentation is enforced after filetype detection and after
   format-on-save.
 - `<C-o>` / `<C-i>` — jump back / forward after `gd` and other jumps.
+- **Ghostty terminal** — no titlebar, rounded corners, frosted-glass look,
+  centered with edge gaps; **Alt+Arrow** creates panes and **Shift+Arrow** moves
+  between them. Full lesson in **Part VI**.
 
 ---
 
@@ -317,7 +337,9 @@ leaving the keyboard.
 | `<C-Up>` / `<C-Down>` | Grow / shrink window height | [CFG] |
 | `<C-Left>` / `<C-Right>` | Shrink / grow window width | [CFG] |
 | `<C-d>` / `<C-u>` | Scroll half a page down / up, cursor centred | [CFG] |
-| `<Tab>` / `<S-Tab>` | Next / previous buffer | [CFG] |
+| `<Tab>` / `<S-Tab>` | Next / previous file tab | [CFG] |
+| `<C-Tab>` / `<C-S-Tab>` | Next / previous file tab | [CFG] |
+| `<A-1>` … `<A-9>` | Jump to file tab 1 … 9 | [CFG] |
 | `<leader><leader>` | Jump to previously open buffer | [CFG] |
 | `<C-o>` / `<C-i>` | Jump back / forward to previous cursor positions | [VIM] |
 | `<leader>ws` / `<C-s>` | Save buffer (Insert mode included) | [CFG] |
@@ -329,7 +351,15 @@ leaving the keyboard.
 | `q` | Close helper windows | [CFG] |
 
 `wq`/`wQ` use `mini.bufremove`; unlike plain `:bdelete`, they will not collapse
-your splits when the closed buffer was visible in more than one window.
+your splits when the closed buffer was visible in more than one window. The same
+helper backs each tab's `×` and middle-click, so closing from the tab strip is
+just as layout-safe.
+
+The tab strip is always visible, even with one file open. Inactive tabs use a
+slightly darker surface and the active tab matches the editor; a blue marker
+and the file's icon identify the current file. Unsaved files show `●`, and LSP
+problems show a coloured count on the tab. When Neo-tree, Aerial or Trouble is
+open, the strip labels that sidebar so tabs stay aligned with the editor area.
 
 ### Try it
 
@@ -934,11 +964,12 @@ still contains `eval "$(starship init zsh)"`.
 | Normal | `<C-Up/Down>` | Grow / shrink height |
 | Normal | `<C-Left/Right>` | Shrink / grow width |
 | Normal | `<C-d>` / `<C-u>` | Centered half-page scroll down / up |
-| Normal | `<Tab>` / `<S-Tab>` | Next / previous buffer |
+| Normal | `<Tab>` / `<S-Tab>`, `<C-Tab>` / `<C-S-Tab>` | Next / previous file tab |
+| Normal | `<A-1>` … `<A-9>` | Jump to file tab 1 … 9 |
 | Normal | `n` / `N` | Centered next / previous search result |
 | Normal | `[q` / `]q` | Previous / next quickfix error |
 | Normal | `<C-o>` / `<C-i>` | Jump back / forward in the jumplist (return after `gd`) |
-| Normal | `<C-\>` | Toggle default terminal |
+| Normal | `<C-\>` or Ctrl+grave | Toggle default terminal |
 | Normal | `<C-w>d` | Diagnostic under cursor |
 | Visual | `J` / `K` | Move selection down / up |
 | Visual | `<` / `>` | Outdent / indent selection |
@@ -980,9 +1011,10 @@ still contains `eval "$(starship init zsh)"`.
   diffview.nvim, layout-preserving buffer close via mini.bufremove.
 - **Markdown**: render-markdown.nvim — in-place rendered preview; README files
   auto-preview in Neo-tree.
-- **UI**: Catppuccin Mocha (transparent), Lualine, which-key, dressing,
-  nvim-notify, sessions, Fidget LSP progress, and a built-in `:NvimGuide`
-  beginner cheat sheet.
+- **UI**: Catppuccin (transparent and light/dark aware by default, `<leader>ut` for solid),
+  bufferline.nvim tab strip, Lualine, which-key, dressing, nvim-notify,
+  sessions, Fidget LSP progress, and a built-in `:NvimGuide` beginner cheat
+  sheet.
 - **Git**: gitsigns, diffview.nvim, lazygit.
 
 ## Appendix C — Productivity playbooks
@@ -1098,3 +1130,112 @@ Known key conflicts worth remembering:
 - `<C-n>`: toggle Neo-tree globally, close it inside Neo-tree, completion in
   Insert mode.
 - Normal `s` is Flash, not stock Vim’s substitute-character.
+
+---
+
+# PART VI — Ghostty Terminal Class
+
+**Goal:** Turn the terminal into a power-user workspace *before* Neovim even
+starts. Everything below lives in `~/.config/ghostty/config` and reloads live —
+no restart needed after an edit.
+
+## Lesson 16 — The window: clean, centered, frosted
+
+### Learn
+
+| Setting | Value | Why |
+| --- | --- | --- |
+| `window-decoration = client` | client-side frame | No titlebar, **rounded corners kept** |
+| `gtk-titlebar = false` | off | Removes the decoration bar completely |
+| `window-show-tab-bar = never` | off | No tab strip — panes replace tabs |
+| `font-family` / `font-size` | `JetBrainsMono Nerd Font` / `12` | Same look as the old Ptyxis terminal |
+| `theme` | `Cursor Dark` | Matches the transparent Neovim palette |
+| `background-opacity` | `0.90` | 10% see-through — subtle, not distracting |
+| `background-blur` | `true` | Frosted-glass effect (see GNOME note) |
+| `window-width` / `window-height` | `118` × `32` | Grid cells, not pixels |
+
+**GNOME blur note:** Ghostty's own `background-blur` is ignored on GNOME. The
+`blur-my-shell@aunetx` extension does the real work: application blur is enabled
+and `com.mitchellh.ghostty` is whitelisted. Tune its `sigma` setting for a
+stronger or weaker blur.
+
+**Centering note:** Wayland forbids apps from positioning their own windows, so
+Ghostty's `window-position-x/y` are ignored. The
+`deja-window@mcast.gnomext.com` extension remembers Ghostty's geometry
+(`x=83`, `y=137`, `1204×529`) and restores it on every launch, giving even gaps
+on all four edges of the 1366×768 screen. Drag or resize the window once and
+Deja Window remembers the new layout.
+
+### Try it
+
+1. Open Ghostty: no titlebar, but the corners should still be rounded.
+2. Wave the mouse over the window — the wallpaper should be faintly visible.
+3. After any edit, run `ghostty +validate-config` to catch typos.
+
+### Checkpoint
+
+You can explain why the config uses `client` instead of `none`, and where the
+blur and centering actually come from.
+
+## Lesson 17 — Panes: create, move, zoom, resize, close
+
+This is the headline feature. You never need the mouse.
+
+| Keys | Action |
+| --- | --- |
+| **Alt+← / → / ↑ / ↓** | Create a new pane in that direction |
+| **Shift+← / → / ↑ / ↓** | Move focus to the pane in that direction |
+| **Ctrl+Shift+Enter** | Zoom / unzoom the focused pane |
+| **Super+Ctrl+Shift+Arrow** | Resize the focused pane by 10% |
+| **Ctrl+Shift+W** | Close the current pane |
+| **Ctrl+Shift+O / E** | New pane right / down (built-in alternatives) |
+| **Super+Ctrl+[ / ]** | Focus previous / next pane in opening order |
+| **Ctrl+Shift+N / T** | New window / new tab |
+| **Ctrl+Shift+Q** | Quit Ghostty |
+
+> `Shift+Arrow` replaces the stock "adjust text selection" binding. Select with
+> the mouse or `Shift+click` instead.
+
+### Try it — build a four-pane coding layout
+
+1. `Alt+→` — split right. Two panes.
+2. In the right pane, `Alt+↓` — split downward. Three panes.
+3. In the bottom-right pane, `Alt+←` — split again. Four panes.
+4. `Shift+← / → / ↑ / ↓` — hop between them without looking.
+5. `Ctrl+Shift+Enter` — zoom the focused pane; press again to unzoom.
+6. `Ctrl+Shift+W` — close it when done.
+
+### Checkpoint
+
+You can build a four-pane layout in under five seconds, move between panes
+without looking at the screen, and close the one you no longer need.
+
+## Lesson 18 — Power-user workflow: terminal + Neovim
+
+Two layers of splits exist. Use each for what it is good at:
+
+- **Ghostty panes** — long-lived processes: `nvim`, a dev server, a log tail, a
+  git client. Manage with **Alt/Shift+Arrow**.
+- **Neovim splits** — short-lived views of your code: files, terminals,
+  quickfix. Manage with `<leader>wv` / `<leader>wh` (Lesson 4).
+
+A fast session:
+
+1. In Ghostty, press `Alt+→` twice → three panes: **editor**, **server**,
+   **shell**.
+2. In the editor pane, `nvim .`; use `Ctrl-p` and `s` to move at speed.
+3. `Shift+→` to the server pane, restart it; `Shift+←` back to code.
+4. For a throwaway shell *inside* Neovim, use `C-\` (Lesson 9) instead of opening
+   a fourth Ghostty pane.
+5. `Ctrl+Shift+Enter` when one pane needs your full attention.
+
+### Checkpoint
+
+You can explain when to use a Ghostty pane versus a Neovim split, and run the
+whole loop — open, edit, test, switch, zoom — without touching the mouse.
+
+---
+
+**Final goal:** the terminal stops being a place you "go to". It becomes part of
+the editor, and the editor becomes part of your thinking. Practice the drills
+in Part I and Part VI for a week; everything else is lookup.
